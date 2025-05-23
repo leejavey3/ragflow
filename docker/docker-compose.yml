@@ -20,11 +20,11 @@ services:
     container_name: ragflow-server
     ports:
       - ${SVR_HTTP_PORT}:9380
-      - 80:80
-      - 443:443
-      - 5678:5678
-      - 5679:5679
-      - 9382:9382 # entry for MCP (host_port:docker_port). The docker_port must match the value you set for `mcp-port` above.
+      - ${RAGFLOW_WEB_PORT_80:-80}:80 # 新增变量，并提供默认值 80
+      - ${RAGFLOW_WEB_PORT_443:-443}:443 # 新增变量，并提供默认值 443
+      - ${RAGFLOW_DEBUG_PORT_5678:-5678}:5678 # 新增变量，并提供默认值 5678
+      - ${RAGFLOW_DEBUG_PORT_5679:-5679}:5679 # 新增变量，并提供默认值 5679
+      - ${RAGFLOW_MCP_PORT:-9382}:9382 # 新增变量，并提供默认值 9382
     volumes:
       - ./ragflow-logs:/ragflow/logs
       - ./nginx/ragflow.conf:/etc/nginx/conf.d/ragflow.conf
@@ -44,8 +44,6 @@ services:
     restart: on-failure
     # https://docs.docker.com/engine/daemon/prometheus/#create-a-prometheus-configuration
     # If you use Docker Desktop, the --add-host flag is optional. This flag ensures that the host's internal IP is exposed to the Prometheus container.
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
   # executor:
   #   depends_on:
   #     mysql:
